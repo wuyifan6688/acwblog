@@ -4,7 +4,7 @@
             <div class="row">
 
         <div class="col-3">
-            <img class="img-fluid" src="https://cdn.acwing.com/media/user/profile/photo/210742_lg_d127aae70a.jpeg" alt="">
+            <img class="img-fluid" :src="user.photo" alt="">
         </div>
 
         <div class="col-9">

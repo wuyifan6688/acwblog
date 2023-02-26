@@ -21,7 +21,10 @@
   import UserProfileInfo from '@/components/UserProfileInfo.vue';
   import UserProfilePosts from "@/components/UserProfilePosts.vue";
   import UserProfileWrite from '@/components/UserProfileWrite.vue';
-  import { reactive } from 'vue';
+  import $ from "jquery"
+  import {reactive}from "vue"
+  import { useStore } from 'vuex';
+  import { useRoute } from 'vue-router';
   export default {
   components:{
     ContentBase,
@@ -30,32 +33,41 @@
      UserProfileWrite
   },
   setup(){
-   const user=reactive({
-    id:1,
-    username:"wyf",
-    lastname:"w",
-    firstname:"yf",
-    followerCount:0,
-    is_followed:false
-   });
+    const store=useStore();
+    const route=useRoute();
+  const user=reactive({});
+  const posts=reactive({});
+    const userId=route.params.userId
 
-   const posts=reactive({
-    count:3,
-    posts:[
-        {
-        id:1,
-        content:"你好"
+  $.ajax({
+    url:"https://app165.acapp.acwing.com.cn/myspace/getinfo/",
+    type:"get",
+    data:{
+        user_id:userId
     },
-        {
-        id:2,
-        content:"w好"
+    Headers:{
+        "Authorization":"Bearer "+store.state.user.access
     },
-        {
-        id:1,
-        content:"t好"
+    success(resp){
+        user.id=resp.id;
+        user.name=resp.name;
+        user.photo=resp.photo;
+        user.is_followed=resp.is_followed;
+        user.followerCount=resp.followerCount
+    }
+
+  })
+
+  $.ajax({
+    url:"https://app165.acapp.acwing.com.cn/myspace/post/",
+    type:"get",
+    Headers:{
+        "Authorization":"Bearer "+store.state.user.access
     },
-]
-   })
+    success(resp){
+        posts.posts=resp.post
+    }
+  })
 
    const sendit=(content)=>{
     posts.count++;

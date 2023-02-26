@@ -32,9 +32,16 @@ const routes = [
     component: UserList
   },
   {
-    path: '/UserProfile',
+    path: '/UserProfile/:userId',
     name: 'UserProfile',
     component: UserProfile
+  },
+  {
+    path:"/404",
+    component:NotFoundView
+  },{
+    path:"/:catchAll(.*)",
+    redirect: "/404"
   }
 
 
