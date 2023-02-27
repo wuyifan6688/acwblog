@@ -4,10 +4,10 @@
         <div class="row">
             <div class="col-3">
                 <UserProfileInfo :user="user" @followme="follow" ></UserProfileInfo>
-                <UserProfileWrite class="write" @sendme="sendit"></UserProfileWrite>
+                <UserProfileWrite v-if="is_me" class="write" @sendme="sendit"></UserProfileWrite>
             </div>
                 <div class="col-9">
-                    <UserProfilePosts :postme="posts"></UserProfilePosts>
+                    <UserProfilePosts :postme="posts" :user="user"  @del="delone"></UserProfilePosts>
                 </div>
             
         </div>
@@ -22,9 +22,10 @@
   import UserProfilePosts from "@/components/UserProfilePosts.vue";
   import UserProfileWrite from '@/components/UserProfileWrite.vue';
   import $ from "jquery"
-  import {reactive}from "vue"
+  import {computed, reactive}from "vue"
   import { useStore } from 'vuex';
   import { useRoute } from 'vue-router';
+
   export default {
   components:{
     ContentBase,
@@ -45,12 +46,12 @@
     data:{
         user_id:userId
     },
-    Headers:{
+    headers:{
         "Authorization":"Bearer "+store.state.user.access
     },
     success(resp){
         user.id=resp.id;
-        user.name=resp.name;
+        user.username=resp.username;
         user.photo=resp.photo;
         user.is_followed=resp.is_followed;
         user.followerCount=resp.followerCount
@@ -61,11 +62,18 @@
   $.ajax({
     url:"https://app165.acapp.acwing.com.cn/myspace/post/",
     type:"get",
-    Headers:{
+    data:{
+        user_id:userId
+    },
+    headers:{
         "Authorization":"Bearer "+store.state.user.access
     },
     success(resp){
-        posts.posts=resp.post
+        posts.posts=resp;
+     
+    },
+    error(){
+        console.log("failed")
     }
   })
 
@@ -74,8 +82,19 @@
     posts.posts.unshift({
         id:posts.count,
         content:content
+    });
+    $.ajax({
+        url:"https://app165.acapp.acwing.com.cn/myspace/post/",
+        type:"post",
+        data:{content:content},
+        headers:{
+        "Authorization":"Bearer "+store.state.user.access
+    },
     })
    }
+
+
+
    const follow= ()=>{ 
     if(user.is_followed)user.followerCount--;
     else user.followerCount++;
@@ -83,7 +102,27 @@
    
    }
 
-   return {user,follow,posts,sendit}//必须要双引号
+
+   const delone=(id)=>{
+    $.ajax({
+        url:"https://app165.acapp.acwing.com.cn/myspace/post/",
+        type:"delete",
+        data:{
+            post_id:id
+        },
+        headers:{
+        "Authorization":"Bearer "+store.state.user.access
+    },
+   
+    success(){console.log("go")}
+    }),
+     posts.posts=posts.posts.filter(post=>post.id!=id);
+     posts.count=posts.posts.length//为什么前端必须删除：因为告诉服务器之后，自己并不会立即刷新删除
+   }
+
+   const is_me=computed(()=>userId==store.state.user.id)
+
+   return {user,follow,posts,sendit,is_me,delone}//必须要双引号
   }
   }
   </script>

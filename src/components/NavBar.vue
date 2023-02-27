@@ -30,7 +30,7 @@
     </ul>
     <ul class="navbar-nav" v-else>
       <li class="nav-item">
-          <router-link class="nav-link" :to="{name:`LoginView`}">{{$store.state.user.username}}</router-link>
+          <router-link class="nav-link" :to="{name:`UserProfile`,params:{userId:$store.state.user.id}}">{{$store.state.user.username}}</router-link>
         </li>
         <li class="nav-item">
 <a  class="nav-link" style="cursor: pointer;" @click="logout"> 退出</a>
@@ -49,6 +49,7 @@ setup(){
   const logout=()=>{
     store.commit("logout")
   }
+
 
   return {
     logout

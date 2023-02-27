@@ -8,7 +8,7 @@
         </div>
 
         <div class="col-9">
-            <div class="username">{{fullname}} </div>
+            <div class="username">{{user.username}} </div>
             <div class="userfans">粉丝数:{{ user.followerCount }}</div>
             <button v-if="user.is_followed" @click="follow" type="button" class="btn btn-primary">取消关注</button>
             <button v-else  type="button" @click="follow" class="btn btn-primary">+关注</button>

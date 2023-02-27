@@ -21,6 +21,7 @@
   
   <script>
   import { useStore } from 'vuex';
+
   import ContentBase from '@/components/ContentBase.vue';
   import $ from "jquery";
   import {ref} from "vue";
@@ -31,6 +32,7 @@
   },
   setup(){
     const store=useStore();//忘记加括号
+   
     let user=ref([]);
     $.ajax({
         url:"https://app165.acapp.acwing.com.cn/myspace/userlist/",
@@ -48,6 +50,9 @@
                 userId
             }
         })}
+        else {
+            router.push({name:"LoginView"})
+        }
     }
 
     return {
